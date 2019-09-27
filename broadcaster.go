@@ -46,8 +46,10 @@ func (b *broadcaster) run() {
 				return
 			}
 		case ch := <-b.unreg:
-			delete(b.outputs, ch)
-			close(ch)
+			if _, ok := b.outputs[ch]; ok {
+				delete(b.outputs, ch)
+				close(ch)
+			}
 		}
 	}
 }
