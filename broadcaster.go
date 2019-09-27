@@ -47,6 +47,7 @@ func (b *broadcaster) run() {
 			}
 		case ch := <-b.unreg:
 			delete(b.outputs, ch)
+			close(ch)
 		}
 	}
 }
