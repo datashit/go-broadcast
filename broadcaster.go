@@ -37,6 +37,11 @@ func (b *broadcaster) broadcast(m interface{}) {
 func (b *broadcaster) run() {
 	for {
 		select {
+		case ch := <-b.unreg:
+			if _, ok := b.outputs[ch]; ok {
+				delete(b.outputs, ch)
+				close(ch)
+			}
 		case m := <-b.input:
 			b.broadcast(m)
 		case ch, ok := <-b.reg:
@@ -45,11 +50,7 @@ func (b *broadcaster) run() {
 			} else {
 				return
 			}
-		case ch := <-b.unreg:
-			if _, ok := b.outputs[ch]; ok {
-				delete(b.outputs, ch)
-				close(ch)
-			}
+		
 		}
 	}
 }
